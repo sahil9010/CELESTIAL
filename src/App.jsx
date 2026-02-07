@@ -243,7 +243,7 @@ function App() {
 
             <div className="categories-grid">
               {categories.map((cat) => (
-                <div key={cat.id} className="category-card glass-morphism" onClick={() => handleCategoryClick(cat)}>
+                <div key={cat.id} className="category-card glass-morphism">
                   <div className="cat-icon-container gradient-text">{cat.icon}</div>
                   <h3>{cat.name}</h3>
                   <p className="listing-count">{cat.count} Listings</p>
