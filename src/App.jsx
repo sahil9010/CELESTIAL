@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Search, Bike, Car, Home, Map, MessageSquare, Plus, User, Heart, MapPin, Calendar, ArrowRight, X, LayoutGrid, ShoppingBag, Key, Briefcase, ChevronRight, Filter, SlidersHorizontal } from 'lucide-react'
+import { Search, Bike, Car, Home, Map, MessageSquare, Plus, User, Heart, MapPin, Calendar, ArrowRight, X, LayoutGrid, ShoppingBag, Key, Briefcase, ChevronRight, Filter, SlidersHorizontal, ArrowLeft } from 'lucide-react'
 import './App.css'
 
 const categories = [
@@ -28,11 +28,38 @@ const featuredListings = [
     location: 'Pokhara',
     time: '5h ago',
     image: 'https://images.unsplash.com/photo-1568772585407-43c190b398bb?auto=format&fit=crop&q=80&w=800'
+  },
+  {
+    id: 3,
+    category: 'house',
+    title: 'Modern Villa with Private Pool',
+    price: '$1,200/mo',
+    location: 'Lalitpur',
+    time: '1d ago',
+    image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=800'
+  },
+  {
+    id: 4,
+    category: 'office',
+    title: 'Premium Corporate Hub - Floor 12',
+    price: '$3,500/mo',
+    location: 'Kathmandu',
+    time: '3h ago',
+    image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800'
+  },
+  {
+    id: 5,
+    category: 'land',
+    title: 'Residential Plot - 5 Aana',
+    price: '$95,000',
+    location: 'Bhaktapur',
+    time: '12h ago',
+    image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&q=80&w=800'
   }
 ]
 
 function App() {
-  const [activeOverlay, setActiveOverlay] = useState(null) // 'category' | 'postAd' | 'form' | 'filters'
+  const [activeOverlay, setActiveOverlay] = useState(null) // 'category' | 'postAd' | 'form' | 'results' | 'filters'
   const [selectedCategory, setSelectedCategory] = useState(null)
   const [adAction, setAdAction] = useState(null) // 'buy' | 'rent' | 'sell' | 'rentOut'
 
@@ -51,9 +78,13 @@ function App() {
     setActiveOverlay('form')
   }
 
-  const openFilters = (action) => {
+  const showResults = (action) => {
     setAdAction(action)
-    setActiveOverlay('filters')
+    setActiveOverlay('results')
+  }
+
+  const toggleFilters = () => {
+    setActiveOverlay(activeOverlay === 'filters' ? 'results' : 'filters')
   }
 
   const closeOverlay = () => {
@@ -77,12 +108,12 @@ function App() {
                   <h2>Search in <span className="gradient-text">{selectedCategory.name}</span></h2>
                 </div>
                 <div className="options-grid">
-                  <div className="option-card glass-morphism" onClick={() => openFilters('buy')}>
+                  <div className="option-card glass-morphism" onClick={() => showResults('buy')}>
                     <ShoppingBag size={48} className="gradient-text" />
                     <h3>Buy</h3>
                     <p>Browse listings for sale.</p>
                   </div>
-                  <div className="option-card glass-morphism" onClick={() => openFilters('rent')}>
+                  <div className="option-card glass-morphism" onClick={() => showResults('rent')}>
                     <Key size={48} className="gradient-text" />
                     <h3>Rent</h3>
                     <p>Browse listings for rent.</p>
@@ -91,14 +122,52 @@ function App() {
               </div>
             )}
 
+            {activeOverlay === 'results' && (
+              <div className="selection-screen">
+                <div className="selection-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', textAlign: 'left', marginBottom: '2rem' }}>
+                  <div>
+                    <h2 style={{ margin: 0 }}>Showing <span className="gradient-text">{selectedCategory.name}</span></h2>
+                    <p style={{ color: 'var(--text-secondary)' }}>{adAction === 'buy' ? 'Available for Purchase' : 'Available for Rent'}</p>
+                  </div>
+                  <button className="btn glass-morphism" onClick={toggleFilters} style={{ display: 'flex', gap: '0.5rem' }}>
+                    <SlidersHorizontal size={20} /> Filter
+                  </button>
+                </div>
+
+                <div className="product-grid">
+                  {featuredListings.filter(item => item.category === selectedCategory.id).length > 0 ? (
+                    featuredListings.filter(item => item.category === selectedCategory.id).map(item => (
+                      <div key={item.id} className="product-card glass-morphism">
+                        <div className="image-wrapper">
+                          <img src={item.image} alt={item.title} className="product-image" />
+                        </div>
+                        <div className="product-info">
+                          <div className="product-price">{item.price}</div>
+                          <h3 className="product-title">{item.title}</h3>
+                          <div className="product-meta">
+                            <span><MapPin size={14} /> {item.location}</span>
+                            <span><Calendar size={14} /> {item.time}</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div style={{ padding: '4rem', gridColumn: '1/-1', color: 'var(--text-secondary)' }}>
+                      No specific listings found for this category yet.
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
             {activeOverlay === 'filters' && (
               <div className="form-screen glass-morphism">
                 <div className="form-header">
+                  <button className="btn" onClick={() => setActiveOverlay('results')} style={{ position: 'absolute', left: '1.5rem', top: '1.5rem', color: 'var(--text-secondary)' }}><ArrowLeft size={24} /></button>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', justifyContent: 'center', marginBottom: '1rem' }}>
                     <span className="gradient-text">{selectedCategory.icon}</span>
-                    <h2 style={{ margin: 0 }}>Filter <span className="gradient-text">{selectedCategory.name}</span></h2>
+                    <h2 style={{ margin: 0 }}>Advanced <span className="gradient-text">Filters</span></h2>
                   </div>
-                  <p style={{ color: 'var(--text-secondary)' }}>Showing results for {adAction === 'buy' ? 'Sale' : 'Rent'}</p>
                 </div>
 
                 <div className="complex-form">
@@ -123,52 +192,10 @@ function App() {
                         <label>Brand</label>
                         <input type="text" placeholder="e.g. Tesla" />
                       </div>
-                      <div className="input-field">
-                        <label>Condition</label>
-                        <select className="glass-morphism">
-                          <option>All Conditions</option>
-                          <option>New</option>
-                          <option>Used</option>
-                        </select>
-                      </div>
                     </div>
                   )}
 
-                  {(selectedCategory.id === 'house' || selectedCategory.id === 'office' || selectedCategory.id === 'land') && (
-                    <div className="form-grid">
-                      <div className="input-field">
-                        <label>Location</label>
-                        <input type="text" placeholder="Search city..." />
-                      </div>
-                      <div className="input-field">
-                        <label>Area (sq. ft)</label>
-                        <input type="text" placeholder="Min area" />
-                      </div>
-                    </div>
-                  )}
-
-                  {(selectedCategory.id === 'house' || selectedCategory.id === 'office') && (
-                    <div className="form-grid">
-                      <div className="input-field">
-                        <label>Bedrooms</label>
-                        <select className="glass-morphism">
-                          <option>Any</option>
-                          <option>1+</option>
-                          <option>2+</option>
-                          <option>3+</option>
-                        </select>
-                      </div>
-                      <div className="input-field">
-                        <label>Parking</label>
-                        <select className="glass-morphism">
-                          <option>Any</option>
-                          <option>Needed</option>
-                        </select>
-                      </div>
-                    </div>
-                  )}
-
-                  <button className="btn btn-primary btn-block" onClick={closeOverlay}>Apply Filters</button>
+                  <button className="btn btn-primary btn-block" onClick={() => setActiveOverlay('results')}>Apply Filters</button>
                 </div>
               </div>
             )}
