@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Search, Bike, Car, Home, Map, MessageSquare, Plus, User, Heart, MapPin, Calendar, ArrowRight, X, LayoutGrid, ShoppingBag, Key, Briefcase, ChevronRight, ChevronDown } from 'lucide-react'
+import { Search, Bike, Car, Home, Map, MessageSquare, Plus, User, Heart, MapPin, Calendar, ArrowRight, X, LayoutGrid, ShoppingBag, Key, Briefcase, ChevronRight, Filter, SlidersHorizontal } from 'lucide-react'
 import './App.css'
 
 const categories = [
@@ -28,20 +28,11 @@ const featuredListings = [
     location: 'Pokhara',
     time: '5h ago',
     image: 'https://images.unsplash.com/photo-1568772585407-43c190b398bb?auto=format&fit=crop&q=80&w=800'
-  },
-  {
-    id: 3,
-    category: 'house',
-    title: 'Modern Villa with Private Pool',
-    price: '$1,200/mo',
-    location: 'Lalitpur',
-    time: '1d ago',
-    image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=800'
   }
 ]
 
 function App() {
-  const [activeOverlay, setActiveOverlay] = useState(null) // 'category' | 'postAd' | 'form'
+  const [activeOverlay, setActiveOverlay] = useState(null) // 'category' | 'postAd' | 'form' | 'filters'
   const [selectedCategory, setSelectedCategory] = useState(null)
   const [adAction, setAdAction] = useState(null) // 'buy' | 'rent' | 'sell' | 'rentOut'
 
@@ -58,6 +49,11 @@ function App() {
     setAdAction(action)
     if (cat) setSelectedCategory(cat)
     setActiveOverlay('form')
+  }
+
+  const openFilters = (action) => {
+    setAdAction(action)
+    setActiveOverlay('filters')
   }
 
   const closeOverlay = () => {
@@ -78,19 +74,101 @@ function App() {
               <div className="selection-screen">
                 <div className="selection-header">
                   <div className="icon-badge gradient-text">{selectedCategory.icon}</div>
-                  <h2>Explore <span className="gradient-text">{selectedCategory.name}</span></h2>
+                  <h2>Search in <span className="gradient-text">{selectedCategory.name}</span></h2>
                 </div>
                 <div className="options-grid">
-                  <div className="option-card glass-morphism" onClick={() => startForm('buy', selectedCategory)}>
+                  <div className="option-card glass-morphism" onClick={() => openFilters('buy')}>
                     <ShoppingBag size={48} className="gradient-text" />
                     <h3>Buy</h3>
                     <p>Browse listings for sale.</p>
                   </div>
-                  <div className="option-card glass-morphism" onClick={() => startForm('rent', selectedCategory)}>
+                  <div className="option-card glass-morphism" onClick={() => openFilters('rent')}>
                     <Key size={48} className="gradient-text" />
                     <h3>Rent</h3>
                     <p>Browse listings for rent.</p>
                   </div>
+                </div>
+              </div>
+            )}
+
+            {activeOverlay === 'filters' && (
+              <div className="form-screen glass-morphism">
+                <div className="form-header">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', justifyContent: 'center', marginBottom: '1rem' }}>
+                    <span className="gradient-text">{selectedCategory.icon}</span>
+                    <h2 style={{ margin: 0 }}>Filter <span className="gradient-text">{selectedCategory.name}</span></h2>
+                  </div>
+                  <p style={{ color: 'var(--text-secondary)' }}>Showing results for {adAction === 'buy' ? 'Sale' : 'Rent'}</p>
+                </div>
+
+                <div className="complex-form">
+                  <div className="form-grid">
+                    <div className="input-field">
+                      <label>Min Price</label>
+                      <input type="text" placeholder="0" />
+                    </div>
+                    <div className="input-field">
+                      <label>Max Price</label>
+                      <input type="text" placeholder="Any" />
+                    </div>
+                  </div>
+
+                  {(selectedCategory.id === 'bikes' || selectedCategory.id === 'cars') && (
+                    <div className="form-grid">
+                      <div className="input-field">
+                        <label>Year / Model</label>
+                        <input type="text" placeholder="e.g. 2023" />
+                      </div>
+                      <div className="input-field">
+                        <label>Brand</label>
+                        <input type="text" placeholder="e.g. Tesla" />
+                      </div>
+                      <div className="input-field">
+                        <label>Condition</label>
+                        <select className="glass-morphism">
+                          <option>All Conditions</option>
+                          <option>New</option>
+                          <option>Used</option>
+                        </select>
+                      </div>
+                    </div>
+                  )}
+
+                  {(selectedCategory.id === 'house' || selectedCategory.id === 'office' || selectedCategory.id === 'land') && (
+                    <div className="form-grid">
+                      <div className="input-field">
+                        <label>Location</label>
+                        <input type="text" placeholder="Search city..." />
+                      </div>
+                      <div className="input-field">
+                        <label>Area (sq. ft)</label>
+                        <input type="text" placeholder="Min area" />
+                      </div>
+                    </div>
+                  )}
+
+                  {(selectedCategory.id === 'house' || selectedCategory.id === 'office') && (
+                    <div className="form-grid">
+                      <div className="input-field">
+                        <label>Bedrooms</label>
+                        <select className="glass-morphism">
+                          <option>Any</option>
+                          <option>1+</option>
+                          <option>2+</option>
+                          <option>3+</option>
+                        </select>
+                      </div>
+                      <div className="input-field">
+                        <label>Parking</label>
+                        <select className="glass-morphism">
+                          <option>Any</option>
+                          <option>Needed</option>
+                        </select>
+                      </div>
+                    </div>
+                  )}
+
+                  <button className="btn btn-primary btn-block" onClick={closeOverlay}>Apply Filters</button>
                 </div>
               </div>
             )}
@@ -134,7 +212,7 @@ function App() {
                 <div className="form-header">
                   <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', justifyContent: 'center', marginBottom: '1rem' }}>
                     <span className="gradient-text">{selectedCategory.icon}</span>
-                    <h2 style={{ margin: 0 }}>{adAction === 'sell' || adAction === 'buy' ? 'Sell' : 'Rent'} <span className="gradient-text">{selectedCategory.name}</span></h2>
+                    <h2 style={{ margin: 0 }}>{adAction === 'sell' ? 'Sell' : 'Rent Out'} <span className="gradient-text">{selectedCategory.name}</span></h2>
                   </div>
                 </div>
 
@@ -164,7 +242,6 @@ function App() {
                           <option>Brand New</option>
                           <option>Like New</option>
                           <option>Used - Good</option>
-                          <option>Used - Fair</option>
                         </select>
                       </div>
                     </div>
@@ -232,7 +309,7 @@ function App() {
           <div className="container animate-fade-in">
             <h1>Find Everything You <br /><span className="gradient-text">Need in Orbit.</span></h1>
             <p className="hero-desc">
-              The premium marketplace for selling, renting, and trading. Bikes, Cars, Houses, and Land - all in one place.
+              The premium marketplace for selling, renting, and trading. All categories in one place.
             </p>
 
             <div className="search-container glass-morphism">
@@ -243,7 +320,7 @@ function App() {
 
             <div className="categories-grid">
               {categories.map((cat) => (
-                <div key={cat.id} className="category-card glass-morphism">
+                <div key={cat.id} className="category-card glass-morphism" onClick={() => handleCategoryClick(cat)}>
                   <div className="cat-icon-container gradient-text">{cat.icon}</div>
                   <h3>{cat.name}</h3>
                   <p className="listing-count">{cat.count} Listings</p>
