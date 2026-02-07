@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
-import { Search, Bike, Car, Home, Map, MessageSquare, Plus, User, Heart, MapPin, Calendar, ArrowRight, X, LayoutGrid, ShoppingBag, Key, Briefcase, ChevronRight, Filter, SlidersHorizontal, ArrowLeft, Phone } from 'lucide-react'
+import { Search, Bike, Car, Home, Map, MessageSquare, Plus, User, Heart, MapPin, Calendar, ArrowRight, X, LayoutGrid, ShoppingBag, Key, Briefcase, ChevronRight, Filter, SlidersHorizontal, ArrowLeft, Phone, ChevronLeft } from 'lucide-react'
 import './App.css'
 
-// Custom WhatsApp Icon for Premium Look
+// Custom WhatsApp Icon
 const WhatsAppIcon = () => (
   <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
@@ -25,7 +25,11 @@ const featuredListings = [
     price: '$45,000',
     location: 'Kathmandu',
     time: '2h ago',
-    image: 'https://images.unsplash.com/photo-1560958089-b8a1929cea89?auto=format&fit=crop&q=80&w=800',
+    images: [
+      'https://images.unsplash.com/photo-1560958089-b8a1929cea89?auto=format&fit=crop&q=80&w=800',
+      'https://images.unsplash.com/photo-1536700503339-1e4b06520771?auto=format&fit=crop&q=80&w=800',
+      'https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&q=80&w=800'
+    ],
     details: { model: 'Model 3', year: '2023', condition: 'Like New', brand: 'Tesla', speed: '0-60 in 3.1s' },
     phone: '+977 9801234567'
   },
@@ -36,7 +40,11 @@ const featuredListings = [
     price: '$28,500',
     location: 'Pokhara',
     time: '5h ago',
-    image: 'https://images.unsplash.com/photo-1591637333184-19aa84b3e01f?auto=format&fit=crop&q=80&w=800',
+    images: [
+      'https://images.unsplash.com/photo-1591637333184-19aa84b3e01f?auto=format&fit=crop&q=80&w=800',
+      'https://images.unsplash.com/photo-1599819811279-d5ad9cccf838?auto=format&fit=crop&q=80&w=800',
+      'https://images.unsplash.com/photo-1632759162353-194941ee24fd?auto=format&fit=crop&q=80&w=800'
+    ],
     details: { model: 'V4 S', year: '2022', cc: '1103cc', mileage: '15 km/l', condition: 'Brand New' },
     phone: '+977 9812345678'
   },
@@ -47,7 +55,11 @@ const featuredListings = [
     price: '$1,200/mo',
     location: 'Lalitpur',
     time: '1d ago',
-    image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=800',
+    images: [
+      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=800',
+      'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&q=80&w=800',
+      'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&q=80&w=800'
+    ],
     details: { area: '3500 sq. ft.', bedrooms: '4', bathrooms: '5', parking: 'Yes', floor: '2.5 Storey' },
     phone: '+977 9841234567'
   },
@@ -58,7 +70,9 @@ const featuredListings = [
     price: '$3,500/mo',
     location: 'Kathmandu',
     time: '3h ago',
-    image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800',
+    images: [
+      'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800'
+    ],
     details: { area: '2500 sq. ft.', partition: '8 Rooms', parking: 'Shared', elevator: 'Yes' },
     phone: '+977 9851234567'
   },
@@ -69,17 +83,20 @@ const featuredListings = [
     price: '$95,000',
     location: 'Bhaktapur',
     time: '12h ago',
-    image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&q=80&w=800',
+    images: [
+      'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&q=80&w=800'
+    ],
     details: { area: '5 Aana', road: '12 ft', face: 'South', type: 'Residential' },
     phone: '+977 9861234567'
   }
 ]
 
 function App() {
-  const [activeOverlay, setActiveOverlay] = useState(null) // 'category' | 'postAd' | 'form' | 'results' | 'filters' | 'detail'
+  const [activeOverlay, setActiveOverlay] = useState(null)
   const [selectedCategory, setSelectedCategory] = useState(null)
-  const [adAction, setAdAction] = useState(null) // 'buy' | 'rent' | 'sell' | 'rentOut'
+  const [adAction, setAdAction] = useState(null)
   const [selectedProduct, setSelectedProduct] = useState(null)
+  const [currentImgIndex, setCurrentImgIndex] = useState(0)
 
   const handleCategoryClick = (cat) => {
     setSelectedCategory(cat)
@@ -92,6 +109,7 @@ function App() {
 
   const handleProductClick = (product) => {
     setSelectedProduct(product)
+    setCurrentImgIndex(0)
     setActiveOverlay('detail')
   }
 
@@ -115,6 +133,19 @@ function App() {
     setSelectedCategory(null)
     setAdAction(null)
     setSelectedProduct(null)
+    setCurrentImgIndex(0)
+  }
+
+  const nextImg = () => {
+    if (selectedProduct && selectedProduct.images.length > 1) {
+      setCurrentImgIndex((prev) => (prev + 1) % selectedProduct.images.length)
+    }
+  }
+
+  const prevImg = () => {
+    if (selectedProduct && selectedProduct.images.length > 1) {
+      setCurrentImgIndex((prev) => (prev - 1 + selectedProduct.images.length) % selectedProduct.images.length)
+    }
   }
 
   return (
@@ -153,33 +184,27 @@ function App() {
                     <h2 style={{ margin: 0 }}>Showing <span className="gradient-text">{selectedCategory.name}</span></h2>
                     <p style={{ color: 'var(--text-secondary)' }}>{adAction === 'buy' ? 'Available for Purchase' : 'Available for Rent'}</p>
                   </div>
-                  <button className="btn glass-morphism" onClick={toggleFilters} style={{ display: 'flex', gap: '0.5rem' }}>
-                    <SlidersHorizontal size={20} /> Filter
+                  <button className="btn btn-filter-visible" onClick={toggleFilters} style={{ display: 'flex', gap: '0.5rem' }}>
+                    <SlidersHorizontal size={20} /> Advanced Filter
                   </button>
                 </div>
 
                 <div className="product-grid">
-                  {featuredListings.filter(item => item.category === selectedCategory.id).length > 0 ? (
-                    featuredListings.filter(item => item.category === selectedCategory.id).map(item => (
-                      <div key={item.id} className="product-card glass-morphism" onClick={() => handleProductClick(item)}>
-                        <div className="image-wrapper">
-                          <img src={item.image} alt={item.title} className="product-image" />
-                        </div>
-                        <div className="product-info">
-                          <div className="product-price">{item.price}</div>
-                          <h3 className="product-title">{item.title}</h3>
-                          <div className="product-meta">
-                            <span><MapPin size={14} /> {item.location}</span>
-                            <span><Calendar size={14} /> {item.time}</span>
-                          </div>
+                  {featuredListings.filter(item => item.category === selectedCategory.id).map(item => (
+                    <div key={item.id} className="product-card glass-morphism" onClick={() => handleProductClick(item)}>
+                      <div className="image-wrapper">
+                        <img src={item.images[0]} alt={item.title} className="product-image" />
+                      </div>
+                      <div className="product-info">
+                        <div className="product-price">{item.price}</div>
+                        <h3 className="product-title">{item.title}</h3>
+                        <div className="product-meta">
+                          <span><MapPin size={14} /> {item.location}</span>
+                          <span><Calendar size={14} /> {item.time}</span>
                         </div>
                       </div>
-                    ))
-                  ) : (
-                    <div style={{ padding: '4rem', gridColumn: '1/-1', color: 'var(--text-secondary)' }}>
-                      No specific listings found for this category yet.
                     </div>
-                  )}
+                  ))}
                 </div>
               </div>
             )}
@@ -211,39 +236,56 @@ function App() {
             )}
 
             {activeOverlay === 'detail' && selectedProduct && (
-              <div className="detail-screen glass-morphism">
-                <div className="detail-header" style={{ position: 'relative', marginBottom: '2rem' }}>
-                  <button className="btn" onClick={() => setActiveOverlay('results')} style={{ position: 'absolute', left: '0', top: '0', background: 'var(--surface)', borderRadius: '50%', padding: '0.8rem' }}><ArrowLeft size={24} /></button>
-                  <div className="detail-image-container">
-                    <img src={selectedProduct.image} alt={selectedProduct.title} />
+              <div className="detail-view-container glass-morphism">
+                <div className="detail-gallery-landscape">
+                  <button className="back-nav-btn" onClick={() => setActiveOverlay('results')}><ArrowLeft size={24} /></button>
+                  <div className="gallery-main">
+                    <img src={selectedProduct.images[currentImgIndex]} alt={selectedProduct.title} />
+                    {selectedProduct.images.length > 1 && (
+                      <>
+                        <button className="gallery-nav prev" onClick={prevImg}><ChevronLeft size={24} /></button>
+                        <button className="gallery-nav next" onClick={nextImg}><ChevronRight size={24} /></button>
+                        <div className="gallery-dots">
+                          {selectedProduct.images.map((_, i) => (
+                            <div key={i} className={`dot ${i === currentImgIndex ? 'active' : ''}`}></div>
+                          ))}
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
-                <div className="detail-info">
-                  <div className="detail-price gradient-text">{selectedProduct.price}</div>
-                  <h2>{selectedProduct.title}</h2>
-                  <div className="detail-meta">
-                    <span><MapPin size={18} /> {selectedProduct.location}</span>
-                    <span><Calendar size={18} /> {selectedProduct.time}</span>
+
+                <div className="detail-info-content">
+                  <div className="detail-main-header">
+                    <div className="detail-price-text gradient-text">{selectedProduct.price}</div>
+                    <h1 className="detail-title-text">{selectedProduct.title}</h1>
+                    <div className="detail-meta-list">
+                      <span><MapPin size={18} /> {selectedProduct.location}</span>
+                      <span><Calendar size={18} /> {selectedProduct.time}</span>
+                    </div>
                   </div>
 
-                  <div className="detail-section">
+                  <div className="detail-specs-section">
                     <h3>Specifications</h3>
-                    <div className="specs-grid">
+                    <div className="specs-flex-grid">
                       {Object.entries(selectedProduct.details).map(([key, value]) => (
-                        <div key={key} className="spec-item">
-                          <label style={{ textTransform: 'capitalize' }}>{key}</label>
+                        <div key={key} className="spec-tile">
+                          <label>{key}</label>
                           <p>{value}</p>
                         </div>
                       ))}
                     </div>
                   </div>
 
-                  <div className="contact-actions">
-                    <a href={`tel:${selectedProduct.phone}`} className="btn btn-primary contact-btn">
-                      <Phone size={20} /> Call Now
+                  <div className="detail-contact-strip">
+                    <a href={`tel:${selectedProduct.phone}`} className="contact-action-btn call-primary">
+                      <Phone size={20} /> <span>Call Seller</span>
                     </a>
-                    <a href={`https://wa.me/${selectedProduct.phone.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="btn whatsapp-btn contact-btn">
-                      <WhatsAppIcon /> WhatsApp
+                    <button className="contact-action-btn chat-secondary">
+                      <MessageSquare size={20} /> <span>Chat Now</span>
+                    </button>
+                    <a href={`https://wa.me/${selectedProduct.phone.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="contact-action-btn whatsapp-green">
+                      <WhatsAppIcon /> <span>WhatsApp</span>
                     </a>
                   </div>
                 </div>
@@ -337,26 +379,6 @@ function App() {
                     </div>
                   )}
 
-                  {(selectedCategory.id === 'house' || selectedCategory.id === 'office') && (
-                    <div className="form-grid">
-                      <div className="input-field">
-                        <label>No. of Bedrooms</label>
-                        <input type="number" placeholder="0" />
-                      </div>
-                      <div className="input-field">
-                        <label>No. of Bathrooms</label>
-                        <input type="number" placeholder="0" />
-                      </div>
-                      <div className="input-field">
-                        <label>Parking Space</label>
-                        <select className="glass-morphism">
-                          <option>No</option>
-                          <option>Yes</option>
-                        </select>
-                      </div>
-                    </div>
-                  )}
-
                   <div className="input-group">
                     <label>Price ($)</label>
                     <input type="text" placeholder="Enter amount" className="price-input" />
@@ -420,7 +442,7 @@ function App() {
             {featuredListings.map(item => (
               <div key={item.id} className="product-card glass-morphism" onClick={() => handleProductClick(item)}>
                 <div className="image-wrapper">
-                  <img src={item.image} alt={item.title} className="product-image" />
+                  <img src={item.images[0]} alt={item.title} className="product-image" />
                 </div>
                 <div className="product-info">
                   <div className="product-price">{item.price}</div>
