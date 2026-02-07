@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
-import { Search, Bike, Car, Home, Map, MessageSquare, Plus, User, Heart, MapPin, Calendar, ArrowRight, X, LayoutGrid, ShoppingBag, Key } from 'lucide-react'
+import { Search, Bike, Car, Home, Map, MessageSquare, Plus, User, Heart, MapPin, Calendar, ArrowRight, X, LayoutGrid, ShoppingBag, Key, Briefcase } from 'lucide-react'
 import './App.css'
 
 const categories = [
   { id: 'bikes', name: 'Bikes', icon: <Bike />, count: '1.2k' },
   { id: 'cars', name: 'Cars', icon: <Car />, count: '850' },
   { id: 'house', name: 'Houses', icon: <Home />, count: '420' },
+  { id: 'office', name: 'Office Space', icon: <Briefcase />, count: '150' },
   { id: 'land', name: 'Land', icon: <Map />, count: '310' },
 ]
 
