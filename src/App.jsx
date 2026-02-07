@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Search, Bike, Car, Home, Map, MessageSquare, Plus, User, Heart, MapPin, Calendar, ArrowRight, X, LayoutGrid, ShoppingBag, Key, Briefcase, ChevronRight, Filter, SlidersHorizontal, ArrowLeft, Phone, ChevronLeft } from 'lucide-react'
+import { Search, Bike, Car, Home, Map, MessageSquare, Plus, User, Heart, MapPin, Calendar, ArrowRight, X, LayoutGrid, ShoppingBag, Key, Briefcase, ChevronRight, Filter, SlidersHorizontal, ArrowLeft, Phone, ChevronLeft, Send } from 'lucide-react'
 import './App.css'
 
 // Custom WhatsApp Icon
@@ -31,7 +31,8 @@ const featuredListings = [
       'https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&q=80&w=800'
     ],
     details: { model: 'Model 3', year: '2023', condition: 'Like New', brand: 'Tesla', speed: '0-60 in 3.1s' },
-    phone: '+977 9801234567'
+    phone: '+977 9801234567',
+    description: 'This is a premium Tesla Model 3 Performance in pristine condition. Autopilot enabled, premium interior, and lightning-fast acceleration. Perfect for those who want luxury with zero emissions.'
   },
   {
     id: 2,
@@ -46,7 +47,8 @@ const featuredListings = [
       'https://images.unsplash.com/photo-1632759162353-194941ee24fd?auto=format&fit=crop&q=80&w=800'
     ],
     details: { model: 'V4 S', year: '2022', cc: '1103cc', mileage: '15 km/l', condition: 'Brand New' },
-    phone: '+977 9812345678'
+    phone: '+977 9812345678',
+    description: 'The pinnacle of Italian engineering. This Ducati Panigale V4 S is a masterpiece of speed and design. Limited edition Speciale livery with carbon fiber components and racing exhaust.'
   },
   {
     id: 3,
@@ -61,7 +63,8 @@ const featuredListings = [
       'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&q=80&w=800'
     ],
     details: { area: '3500 sq. ft.', bedrooms: '4', bathrooms: '5', parking: 'Yes', floor: '2.5 Storey' },
-    phone: '+977 9841234567'
+    phone: '+977 9841234567',
+    description: 'Luxurious modern villa located in the heart of Lalitpur. Featuring a private heated swimming pool, landscaped garden, and contemporary architecture. Ideal for expatriates and high-end living.'
   },
   {
     id: 4,
@@ -74,7 +77,8 @@ const featuredListings = [
       'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800'
     ],
     details: { area: '2500 sq. ft.', partition: '8 Rooms', parking: 'Shared', elevator: 'Yes' },
-    phone: '+977 9851234567'
+    phone: '+977 9851234567',
+    description: 'State-of-the-art office space on the 12th floor with a panoramic view of the mountains. High-speed internet, backup power, and 24/7 security. Ready to move in for corporate houses.'
   },
   {
     id: 5,
@@ -87,7 +91,8 @@ const featuredListings = [
       'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&q=80&w=800'
     ],
     details: { area: '5 Aana', road: '12 ft', face: 'South', type: 'Residential' },
-    phone: '+977 9861234567'
+    phone: '+977 9861234567',
+    description: 'Prime residential land available in a peacefull area of Bhaktapur. South-facing with a wide road access. Perfect for building your dream home with plenty of sunlight and fresh air.'
   }
 ]
 
@@ -97,6 +102,7 @@ function App() {
   const [adAction, setAdAction] = useState(null)
   const [selectedProduct, setSelectedProduct] = useState(null)
   const [currentImgIndex, setCurrentImgIndex] = useState(0)
+  const [chatMessage, setChatMessage] = useState('')
 
   const handleCategoryClick = (cat) => {
     setSelectedCategory(cat)
@@ -236,57 +242,87 @@ function App() {
             )}
 
             {activeOverlay === 'detail' && selectedProduct && (
-              <div className="detail-view-container glass-morphism">
-                <div className="detail-gallery-landscape">
-                  <button className="back-nav-btn" onClick={() => setActiveOverlay('results')}><ArrowLeft size={24} /></button>
-                  <div className="gallery-main">
-                    <img src={selectedProduct.images[currentImgIndex]} alt={selectedProduct.title} />
-                    {selectedProduct.images.length > 1 && (
-                      <>
-                        <button className="gallery-nav prev" onClick={prevImg}><ChevronLeft size={24} /></button>
-                        <button className="gallery-nav next" onClick={nextImg}><ChevronRight size={24} /></button>
-                        <div className="gallery-dots">
-                          {selectedProduct.images.map((_, i) => (
-                            <div key={i} className={`dot ${i === currentImgIndex ? 'active' : ''}`}></div>
-                          ))}
-                        </div>
-                      </>
-                    )}
+              <div className="detail-split-layout">
+                <div className="detail-left-panel scrollable-panel">
+                  <div className="detail-gallery-landscape">
+                    <button className="back-nav-btn" onClick={() => setActiveOverlay('results')}><ArrowLeft size={24} /></button>
+                    <div className="gallery-main">
+                      <img src={selectedProduct.images[currentImgIndex]} alt={selectedProduct.title} />
+                      {selectedProduct.images.length > 1 && (
+                        <>
+                          <button className="gallery-nav prev" onClick={prevImg}><ChevronLeft size={24} /></button>
+                          <button className="gallery-nav next" onClick={nextImg}><ChevronRight size={24} /></button>
+                          <div className="gallery-dots">
+                            {selectedProduct.images.map((_, i) => (
+                              <div key={i} className={`dot ${i === currentImgIndex ? 'active' : ''}`}></div>
+                            ))}
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="detail-info-content">
+                    <div className="detail-main-header">
+                      <div className="detail-price-text gradient-text">{selectedProduct.price}</div>
+                      <h1 className="detail-title-text">{selectedProduct.title}</h1>
+                      <div className="detail-meta-list">
+                        <span><MapPin size={18} /> {selectedProduct.location}</span>
+                        <span><Calendar size={18} /> {selectedProduct.time}</span>
+                      </div>
+                    </div>
+
+                    <div className="detail-section">
+                      <h3>Description</h3>
+                      <p className="description-text">{selectedProduct.description}</p>
+                    </div>
+
+                    <div className="detail-specs-section">
+                      <h3>Specifications</h3>
+                      <div className="specs-flex-grid">
+                        {Object.entries(selectedProduct.details).map(([key, value]) => (
+                          <div key={key} className="spec-tile">
+                            <label>{key}</label>
+                            <p>{value}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="detail-contact-strip">
+                      <a href={`tel:${selectedProduct.phone}`} className="contact-action-btn call-primary">
+                        <Phone size={20} /> <span>Call Seller</span>
+                      </a>
+                      <a href={`https://wa.me/${selectedProduct.phone.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="contact-action-btn whatsapp-green">
+                        <WhatsAppIcon /> <span>WhatsApp</span>
+                      </a>
+                    </div>
                   </div>
                 </div>
 
-                <div className="detail-info-content">
-                  <div className="detail-main-header">
-                    <div className="detail-price-text gradient-text">{selectedProduct.price}</div>
-                    <h1 className="detail-title-text">{selectedProduct.title}</h1>
-                    <div className="detail-meta-list">
-                      <span><MapPin size={18} /> {selectedProduct.location}</span>
-                      <span><Calendar size={18} /> {selectedProduct.time}</span>
+                <div className="detail-right-panel glass-morphism">
+                  <div className="chat-header">
+                    <div className="seller-badge">
+                      <div className="seller-avatar">S</div>
+                      <div>
+                        <div className="seller-name">Seller Online</div>
+                        <div className="seller-status">Ready to help</div>
+                      </div>
                     </div>
                   </div>
-
-                  <div className="detail-specs-section">
-                    <h3>Specifications</h3>
-                    <div className="specs-flex-grid">
-                      {Object.entries(selectedProduct.details).map(([key, value]) => (
-                        <div key={key} className="spec-tile">
-                          <label>{key}</label>
-                          <p>{value}</p>
-                        </div>
-                      ))}
+                  <div className="chat-messages">
+                    <div className="message received">
+                      Hi! Are you interested in the {selectedProduct.title}?
                     </div>
                   </div>
-
-                  <div className="detail-contact-strip">
-                    <a href={`tel:${selectedProduct.phone}`} className="contact-action-btn call-primary">
-                      <Phone size={20} /> <span>Call Seller</span>
-                    </a>
-                    <button className="contact-action-btn chat-secondary">
-                      <MessageSquare size={20} /> <span>Chat Now</span>
-                    </button>
-                    <a href={`https://wa.me/${selectedProduct.phone.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="contact-action-btn whatsapp-green">
-                      <WhatsAppIcon /> <span>WhatsApp</span>
-                    </a>
+                  <div className="chat-input-area">
+                    <input
+                      type="text"
+                      placeholder="Type your message..."
+                      value={chatMessage}
+                      onChange={(e) => setChatMessage(e.target.value)}
+                    />
+                    <button className="btn-send gradient-text"><Send size={20} /></button>
                   </div>
                 </div>
               </div>
