@@ -280,48 +280,32 @@ body {
 
 .overlay-content {
   width: 100%;
-  max-width: 1300px;
+  max-width: 100%;
   padding: 1rem;
   max-height: 95vh;
-}
-
-.scrollable-overlay {
   overflow-y: auto;
 }
 
 /* --- SPLIT DETAIL LAYOUT --- */
 .detail-split-layout {
   display: grid;
-  grid-template-columns: 1fr 400px;
-  gap: 1rem;
-  height: 90vh;
+  grid-template-columns: 1fr;
+  max-width: 1100px;
   width: 100%;
+  transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
 .detail-left-panel {
   background: var(--surface);
   border-radius: 32px;
-  overflow-y: auto;
   border: 1px solid var(--glass-border);
-}
-
-.scrollable-panel {
-  scrollbar-width: thin;
-  scrollbar-color: var(--primary) transparent;
-}
-
-.scrollable-panel::-webkit-scrollbar {
-  width: 6px;
-}
-
-.scrollable-panel::-webkit-scrollbar-thumb {
-  background: var(--primary);
-  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
 }
 
 .detail-gallery-landscape {
   width: 100%;
-  height: 420px;
+  height: 450px;
   position: relative;
   background: #000;
 }
@@ -403,18 +387,18 @@ body {
 }
 
 .detail-info-content {
-  padding: 2.5rem;
+  padding: 2rem 2.5rem;
 }
 
 .detail-price-text {
-  font-size: 2.5rem;
+  font-size: 2.8rem;
   font-weight: 800;
   margin-bottom: 0.5rem;
 }
 
 .detail-title-text {
-  font-size: 1.8rem;
-  margin-bottom: 1.2rem;
+  font-size: 2rem;
+  margin-bottom: 1rem;
   line-height: 1.2;
 }
 
@@ -423,7 +407,7 @@ body {
   gap: 2rem;
   color: var(--text-secondary);
   font-size: 1rem;
-  margin-bottom: 2.5rem;
+  margin-bottom: 2rem;
 }
 
 .detail-meta-list span {
@@ -433,14 +417,14 @@ body {
 }
 
 .detail-section {
-  margin-bottom: 2.5rem;
+  margin-bottom: 2rem;
 }
 
 .detail-section h3 {
-  font-size: 1.4rem;
-  margin-bottom: 1rem;
+  font-size: 1.3rem;
+  margin-bottom: 0.8rem;
   border-bottom: 1px solid var(--glass-border);
-  padding-bottom: 0.5rem;
+  padding-bottom: 0.4rem;
 }
 
 .description-text {
@@ -452,13 +436,13 @@ body {
 .specs-flex-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 1.2rem;
+  gap: 1rem;
 }
 
 .spec-tile {
   padding: 1rem;
   background: rgba(255, 255, 255, 0.03);
-  border-radius: 16px;
+  border-radius: 18px;
   border: 1px solid var(--glass-border);
 }
 
@@ -468,17 +452,20 @@ body {
   letter-spacing: 1px;
   margin-bottom: 0.3rem;
   display: block;
+  color: var(--text-secondary);
 }
 
 .spec-tile p {
   font-size: 1.1rem;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .detail-contact-strip {
   display: flex;
   gap: 1rem;
   margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--glass-border);
 }
 
 .contact-action-btn {
@@ -489,9 +476,12 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.6rem;
+  gap: 0.8rem;
   text-decoration: none;
   transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
 }
 
 .call-primary {
@@ -499,18 +489,48 @@ body {
   color: white;
 }
 
+.chat-secondary {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border);
+  color: white;
+}
+
+.chat-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--primary);
+}
+
 .whatsapp-green {
   background: #25D366;
   color: white;
 }
 
-/* --- RIGHT PANEL (CHAT AREA) --- */
-.detail-right-panel {
+/* --- CHAT POPUP MODAL --- */
+.chat-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  z-index: 3000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.chat-popup {
+  width: 100%;
+  max-width: 500px;
+  max-height: 600px;
   border-radius: 32px;
   display: flex;
   flex-direction: column;
+  border: 1px solid var(--glass-border);
+  background: var(--surface);
   overflow: hidden;
-  height: 100%;
 }
 
 .chat-header {
@@ -547,6 +567,21 @@ body {
   font-weight: 500;
 }
 
+.close-chat-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+
+.close-chat-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
 .chat-messages {
   flex: 1;
   padding: 1.5rem;
@@ -554,6 +589,7 @@ body {
   flex-direction: column;
   gap: 1rem;
   overflow-y: auto;
+  min-height: 300px;
 }
 
 .message {
@@ -593,19 +629,10 @@ body {
   cursor: pointer;
   display: flex;
   align-items: center;
+  color: var(--primary);
 }
 
-@media (max-width: 1100px) {
-  .detail-split-layout {
-    grid-template-columns: 1fr;
-    height: auto;
-  }
 
-  .detail-right-panel {
-    height: 500px;
-    margin-top: 1rem;
-  }
-}
 
 /* Better Filter Button */
 .btn-filter-visible {
@@ -637,4 +664,369 @@ body {
 .footer-links {
   display: flex;
   gap: 2rem;
+}
+
+/* ============================================ */
+/* MOBILE RESPONSIVE STYLES */
+/* ============================================ */
+
+/* Tablet Breakpoint (768px and below) */
+@media (max-width: 768px) {
+
+  /* Navbar */
+  .navbar {
+    height: 60px;
+    padding: 0 1rem;
+    margin: 0.5rem;
+  }
+
+  .nav-logo {
+    font-size: 1.4rem;
+  }
+
+  .nav-actions {
+    gap: 0.5rem;
+  }
+
+  /* Hero Section */
+  .hero {
+    padding-top: 120px;
+    padding-bottom: 60px;
+  }
+
+  .hero-desc {
+    font-size: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .search-container {
+    padding: 0.5rem;
+    gap: 0.5rem;
+  }
+
+  /* Categories Grid */
+  .categories-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .category-card {
+    padding: 1.5rem 1rem;
+  }
+
+  /* Product Grid */
+  .product-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  /* Detail View */
+  .detail-split-layout {
+    max-width: 100%;
+    padding: 0;
+  }
+
+  .detail-gallery-landscape {
+    height: 350px;
+    border-radius: 0;
+  }
+
+  .detail-info-content {
+    padding: 1.5rem;
+  }
+
+  .detail-price-text {
+    font-size: 2.2rem;
+  }
+
+  .detail-title-text {
+    font-size: 1.6rem;
+  }
+
+  .specs-flex-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Chat Popup */
+  .chat-popup {
+    max-width: 90%;
+    max-height: 70vh;
+  }
+
+  /* Footer */
+  .footer-content {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .footer-links {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
+
+/* Mobile Breakpoint (480px and below) */
+@media (max-width: 480px) {
+
+  /* Container */
+  .container {
+    padding: 0 1rem;
+  }
+
+  /* Navbar */
+  .navbar {
+    height: 56px;
+    padding: 0 0.75rem;
+    margin: 0.25rem;
+  }
+
+  .nav-logo {
+    font-size: 1.2rem;
+  }
+
+  .nav-icon-btn {
+    padding: 0.4rem;
+  }
+
+  /* Hero Section */
+  .hero {
+    padding-top: 100px;
+    padding-bottom: 40px;
+  }
+
+  .hero h1 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .hero-desc {
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .search-container {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .search-btn {
+    width: 100%;
+    padding: 0.8rem;
+  }
+
+  /* Categories Grid */
+  .categories-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  .category-card {
+    padding: 1.25rem 0.75rem;
+  }
+
+  .cat-icon-container {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 1rem;
+  }
+
+  .cat-icon-container svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .category-card h3 {
+    font-size: 1rem;
+  }
+
+  .listing-count {
+    font-size: 0.8rem;
+  }
+
+  /* Product Grid */
+  .product-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .product-card {
+    max-width: 100%;
+  }
+
+  /* Overlay */
+  .overlay-content {
+    padding: 0.5rem;
+    max-height: 100vh;
+  }
+
+  .close-btn {
+    top: 1rem;
+    right: 1rem;
+  }
+
+  /* Detail View */
+  .detail-split-layout {
+    max-width: 100%;
+  }
+
+  .detail-left-panel {
+    border-radius: 0;
+  }
+
+  .detail-gallery-landscape {
+    height: 280px;
+    border-radius: 0;
+  }
+
+  .back-nav-btn {
+    top: 1rem;
+    left: 1rem;
+    padding: 0.6rem;
+  }
+
+  .gallery-nav {
+    padding: 0.75rem;
+  }
+
+  .detail-info-content {
+    padding: 1.25rem;
+  }
+
+  .detail-price-text {
+    font-size: 1.8rem;
+  }
+
+  .detail-title-text {
+    font-size: 1.3rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .detail-meta-list {
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+  }
+
+  .detail-section {
+    margin-bottom: 1.5rem;
+  }
+
+  .detail-section h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .description-text {
+    font-size: 0.95rem;
+  }
+
+  .specs-flex-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .spec-tile {
+    padding: 0.85rem;
+  }
+
+  .spec-tile p {
+    font-size: 1rem;
+  }
+
+  .detail-contact-strip {
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+    padding-top: 1.25rem;
+  }
+
+  .contact-action-btn {
+    padding: 1rem;
+    font-size: 0.95rem;
+  }
+
+  /* Chat Popup - Bottom Sheet Style */
+  .chat-popup-overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .chat-popup {
+    max-width: 100%;
+    width: 100%;
+    max-height: 85vh;
+    border-radius: 24px 24px 0 0;
+    margin: 0;
+  }
+
+  .chat-header {
+    padding: 1.25rem;
+  }
+
+  .seller-avatar {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
+
+  .seller-name {
+    font-size: 1rem;
+  }
+
+  .chat-messages {
+    padding: 1.25rem;
+    min-height: 250px;
+  }
+
+  .message {
+    max-width: 85%;
+    padding: 0.85rem;
+    font-size: 0.9rem;
+  }
+
+  .chat-input-area {
+    padding: 1rem;
+  }
+
+  .chat-input-area input {
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+  }
+
+  /* Forms */
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .input-field input,
+  .input-field select,
+  .input-group textarea {
+    font-size: 1rem;
+    padding: 0.85rem;
+  }
+
+  /* Selection Screens */
+  .selection-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .options-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .option-card {
+    padding: 1.5rem;
+  }
+
+  /* Footer */
+  .footer {
+    padding: 2rem 1rem;
+    margin-top: 2rem;
+  }
+
+  .footer-links {
+    gap: 0.75rem;
+  }
 }

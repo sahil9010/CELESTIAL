@@ -1,6 +1,19 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Search, Bike, Car, Home, Map, MessageSquare, Plus, User, Heart, MapPin, Calendar, ArrowRight, X, LayoutGrid, ShoppingBag, Key, Briefcase, ChevronRight, Filter, SlidersHorizontal, ArrowLeft, Phone, ChevronLeft, Send } from 'lucide-react'
+import { io } from 'socket.io-client'
 import './App.css'
+
+const API_BASE_URL = 'http://localhost:5000/api'
+
+// Icon mapping for categories
+const iconMap = {
+  Bike: <Bike />,
+  Car: <Car />,
+  Home: <Home />,
+  Briefcase: <Briefcase />,
+  Map: <Map />,
+  LayoutGrid: <LayoutGrid />
+}
 
 // Custom WhatsApp Icon
 const WhatsAppIcon = () => (
@@ -9,100 +22,52 @@ const WhatsAppIcon = () => (
   </svg>
 )
 
-const categories = [
-  { id: 'bikes', name: 'Bikes', icon: <Bike />, count: '1.2k' },
-  { id: 'cars', name: 'Cars', icon: <Car />, count: '850' },
-  { id: 'house', name: 'Houses', icon: <Home />, count: '420' },
-  { id: 'office', name: 'Office Space', icon: <Briefcase />, count: '150' },
-  { id: 'land', name: 'Land', icon: <Map />, count: '310' },
-]
 
-const featuredListings = [
-  {
-    id: 1,
-    category: 'cars',
-    title: 'Tesla Model 3 Performance 2023',
-    price: '$45,000',
-    location: 'Kathmandu',
-    time: '2h ago',
-    images: [
-      'https://images.unsplash.com/photo-1560958089-b8a1929cea89?auto=format&fit=crop&q=80&w=800',
-      'https://images.unsplash.com/photo-1536700503339-1e4b06520771?auto=format&fit=crop&q=80&w=800',
-      'https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&q=80&w=800'
-    ],
-    details: { model: 'Model 3', year: '2023', condition: 'Like New', brand: 'Tesla', speed: '0-60 in 3.1s' },
-    phone: '+977 9801234567',
-    description: 'This is a premium Tesla Model 3 Performance in pristine condition. Autopilot enabled, premium interior, and lightning-fast acceleration. Perfect for those who want luxury with zero emissions.'
-  },
-  {
-    id: 2,
-    category: 'bikes',
-    title: 'Ducati Panigale V4 S Speciale',
-    price: '$28,500',
-    location: 'Pokhara',
-    time: '5h ago',
-    images: [
-      'https://images.unsplash.com/photo-1591637333184-19aa84b3e01f?auto=format&fit=crop&q=80&w=800',
-      'https://images.unsplash.com/photo-1599819811279-d5ad9cccf838?auto=format&fit=crop&q=80&w=800',
-      'https://images.unsplash.com/photo-1632759162353-194941ee24fd?auto=format&fit=crop&q=80&w=800'
-    ],
-    details: { model: 'V4 S', year: '2022', cc: '1103cc', mileage: '15 km/l', condition: 'Brand New' },
-    phone: '+977 9812345678',
-    description: 'The pinnacle of Italian engineering. This Ducati Panigale V4 S is a masterpiece of speed and design. Limited edition Speciale livery with carbon fiber components and racing exhaust.'
-  },
-  {
-    id: 3,
-    category: 'house',
-    title: 'Modern Villa with Private Pool',
-    price: '$1,200/mo',
-    location: 'Lalitpur',
-    time: '1d ago',
-    images: [
-      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=800',
-      'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&q=80&w=800',
-      'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&q=80&w=800'
-    ],
-    details: { area: '3500 sq. ft.', bedrooms: '4', bathrooms: '5', parking: 'Yes', floor: '2.5 Storey' },
-    phone: '+977 9841234567',
-    description: 'Luxurious modern villa located in the heart of Lalitpur. Featuring a private heated swimming pool, landscaped garden, and contemporary architecture. Ideal for expatriates and high-end living.'
-  },
-  {
-    id: 4,
-    category: 'office',
-    title: 'Premium Corporate Hub - Floor 12',
-    price: '$3,500/mo',
-    location: 'Kathmandu',
-    time: '3h ago',
-    images: [
-      'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800'
-    ],
-    details: { area: '2500 sq. ft.', partition: '8 Rooms', parking: 'Shared', elevator: 'Yes' },
-    phone: '+977 9851234567',
-    description: 'State-of-the-art office space on the 12th floor with a panoramic view of the mountains. High-speed internet, backup power, and 24/7 security. Ready to move in for corporate houses.'
-  },
-  {
-    id: 5,
-    category: 'land',
-    title: 'Residential Plot - 5 Aana',
-    price: '$95,000',
-    location: 'Bhaktapur',
-    time: '12h ago',
-    images: [
-      'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&q=80&w=800'
-    ],
-    details: { area: '5 Aana', road: '12 ft', face: 'South', type: 'Residential' },
-    phone: '+977 9861234567',
-    description: 'Prime residential land available in a peacefull area of Bhaktapur. South-facing with a wide road access. Perfect for building your dream home with plenty of sunlight and fresh air.'
-  }
-]
 
 function App() {
+  const [categories, setCategories] = useState([])
+  const [listings, setListings] = useState([])
   const [activeOverlay, setActiveOverlay] = useState(null)
   const [selectedCategory, setSelectedCategory] = useState(null)
   const [adAction, setAdAction] = useState(null)
   const [selectedProduct, setSelectedProduct] = useState(null)
   const [currentImgIndex, setCurrentImgIndex] = useState(0)
   const [chatMessage, setChatMessage] = useState('')
+  const [isChatOpen, setIsChatOpen] = useState(false)
+  const [messages, setMessages] = useState([])
+  const socketRef = useRef()
+
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/categories`)
+      .then(res => res.json())
+      .then(data => setCategories(data))
+      .catch(err => console.error('Error fetching categories:', err))
+
+    fetch(`${API_BASE_URL}/listings`)
+      .then(res => res.json())
+      .then(data => setListings(data))
+      .catch(err => console.error('Error fetching listings:', err))
+  }, [])
+
+  useEffect(() => {
+    socketRef.current = io('http://localhost:5000')
+
+    socketRef.current.on('receive_message', (message) => {
+      setMessages((prev) => [...prev, message])
+    })
+
+    return () => {
+      socketRef.current.disconnect()
+    }
+  }, [])
+
+  useEffect(() => {
+    if (isChatOpen && selectedProduct) {
+      socketRef.current.emit('join_chat', selectedProduct.id)
+      // Reset messages when opening a new chat for now (or fetch from API)
+      setMessages([])
+    }
+  }, [isChatOpen, selectedProduct])
 
   const handleCategoryClick = (cat) => {
     setSelectedCategory(cat)
@@ -115,7 +80,12 @@ function App() {
 
   const handleProductClick = (product) => {
     setSelectedProduct(product)
+    // Find and set the selected category based on product.category slug
+    const cat = categories.find(c => c.slug === product.category)
+    if (cat) setSelectedCategory(cat)
+
     setCurrentImgIndex(0)
+    setIsChatOpen(false)
     setActiveOverlay('detail')
   }
 
@@ -134,12 +104,18 @@ function App() {
     setActiveOverlay(activeOverlay === 'filters' ? 'results' : 'filters')
   }
 
-  const closeOverlay = () => {
-    setActiveOverlay(null)
-    setSelectedCategory(null)
-    setAdAction(null)
-    setSelectedProduct(null)
-    setCurrentImgIndex(0)
+  const handleSendMessage = () => {
+    if (!chatMessage.trim() || !selectedProduct) return
+
+    const data = {
+      content: chatMessage,
+      senderId: 1, // Default user ID from seeding
+      receiverId: selectedProduct.sellerId,
+      listingId: selectedProduct.id
+    }
+
+    socketRef.current.emit('send_message', data)
+    setChatMessage('')
   }
 
   const nextImg = () => {
@@ -161,11 +137,11 @@ function App() {
         <div className="overlay-container animate-fade-in">
           <button className="close-btn" onClick={closeOverlay}><X size={32} /></button>
 
-          <div className="overlay-content scrollable-overlay">
-            {activeOverlay === 'category' && (
+          <div className="overlay-content">
+            {activeOverlay === 'category' && selectedCategory && (
               <div className="selection-screen">
                 <div className="selection-header">
-                  <div className="icon-badge gradient-text">{selectedCategory.icon}</div>
+                  <div className="icon-badge gradient-text">{iconMap[selectedCategory.icon] || <LayoutGrid />}</div>
                   <h2>Search in <span className="gradient-text">{selectedCategory.name}</span></h2>
                 </div>
                 <div className="options-grid">
@@ -183,7 +159,7 @@ function App() {
               </div>
             )}
 
-            {activeOverlay === 'results' && (
+            {activeOverlay === 'results' && selectedCategory && (
               <div className="selection-screen">
                 <div className="selection-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', textAlign: 'left', marginBottom: '2rem' }}>
                   <div>
@@ -196,7 +172,7 @@ function App() {
                 </div>
 
                 <div className="product-grid">
-                  {featuredListings.filter(item => item.category === selectedCategory.id).map(item => (
+                  {listings.filter(item => item.category === selectedCategory.slug).map(item => (
                     <div key={item.id} className="product-card glass-morphism" onClick={() => handleProductClick(item)}>
                       <div className="image-wrapper">
                         <img src={item.images[0]} alt={item.title} className="product-image" />
@@ -206,7 +182,7 @@ function App() {
                         <h3 className="product-title">{item.title}</h3>
                         <div className="product-meta">
                           <span><MapPin size={14} /> {item.location}</span>
-                          <span><Calendar size={14} /> {item.time}</span>
+                          <span><Calendar size={14} /> 2h ago</span>
                         </div>
                       </div>
                     </div>
@@ -215,12 +191,12 @@ function App() {
               </div>
             )}
 
-            {activeOverlay === 'filters' && (
+            {activeOverlay === 'filters' && selectedCategory && (
               <div className="form-screen glass-morphism">
                 <div className="form-header">
                   <button className="btn" onClick={() => setActiveOverlay('results')} style={{ position: 'absolute', left: '1.5rem', top: '1.5rem', color: 'var(--text-secondary)' }}><ArrowLeft size={24} /></button>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', justifyContent: 'center', marginBottom: '1rem' }}>
-                    <span className="gradient-text">{selectedCategory.icon}</span>
+                    <span className="gradient-text">{iconMap[selectedCategory.icon] || <LayoutGrid />}</span>
                     <h2 style={{ margin: 0 }}>Advanced <span className="gradient-text">Filters</span></h2>
                   </div>
                 </div>
@@ -241,9 +217,9 @@ function App() {
               </div>
             )}
 
-            {activeOverlay === 'detail' && selectedProduct && (
+            {activeOverlay === 'detail' && selectedProduct && selectedCategory && (
               <div className="detail-split-layout">
-                <div className="detail-left-panel scrollable-panel">
+                <div className="detail-left-panel">
                   <div className="detail-gallery-landscape">
                     <button className="back-nav-btn" onClick={() => setActiveOverlay('results')}><ArrowLeft size={24} /></button>
                     <div className="gallery-main">
@@ -268,7 +244,7 @@ function App() {
                       <h1 className="detail-title-text">{selectedProduct.title}</h1>
                       <div className="detail-meta-list">
                         <span><MapPin size={18} /> {selectedProduct.location}</span>
-                        <span><Calendar size={18} /> {selectedProduct.time}</span>
+                        <span><Calendar size={18} /> 2h ago</span>
                       </div>
                     </div>
 
@@ -290,39 +266,16 @@ function App() {
                     </div>
 
                     <div className="detail-contact-strip">
-                      <a href={`tel:${selectedProduct.phone}`} className="contact-action-btn call-primary">
+                      <a href={`tel:${selectedProduct.phone || '+1234567890'}`} className="contact-action-btn call-primary">
                         <Phone size={20} /> <span>Call Seller</span>
                       </a>
-                      <a href={`https://wa.me/${selectedProduct.phone.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="contact-action-btn whatsapp-green">
+                      <button className="contact-action-btn chat-secondary" onClick={() => setIsChatOpen(true)}>
+                        <MessageSquare size={20} /> <span>Chat Now</span>
+                      </button>
+                      <a href={`https://wa.me/${(selectedProduct.phone || '+1234567890').replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="contact-action-btn whatsapp-green">
                         <WhatsAppIcon /> <span>WhatsApp</span>
                       </a>
                     </div>
-                  </div>
-                </div>
-
-                <div className="detail-right-panel glass-morphism">
-                  <div className="chat-header">
-                    <div className="seller-badge">
-                      <div className="seller-avatar">S</div>
-                      <div>
-                        <div className="seller-name">Seller Online</div>
-                        <div className="seller-status">Ready to help</div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="chat-messages">
-                    <div className="message received">
-                      Hi! Are you interested in the {selectedProduct.title}?
-                    </div>
-                  </div>
-                  <div className="chat-input-area">
-                    <input
-                      type="text"
-                      placeholder="Type your message..."
-                      value={chatMessage}
-                      onChange={(e) => setChatMessage(e.target.value)}
-                    />
-                    <button className="btn-send gradient-text"><Send size={20} /></button>
                   </div>
                 </div>
               </div>
@@ -352,7 +305,7 @@ function App() {
                     <h3>Select Category</h3>
                     {categories.map(cat => (
                       <div key={cat.id} className="cat-item glass-morphism" onClick={() => startForm(adAction, cat)}>
-                        <span className="gradient-text">{cat.icon}</span>
+                        <span className="gradient-text">{iconMap[cat.icon] || <LayoutGrid />}</span>
                         <span>{cat.name}</span>
                         <ChevronRight size={18} />
                       </div>
@@ -362,11 +315,11 @@ function App() {
               </div>
             )}
 
-            {activeOverlay === 'form' && (
+            {activeOverlay === 'form' && selectedCategory && (
               <div className="form-screen glass-morphism">
                 <div className="form-header">
                   <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', justifyContent: 'center', marginBottom: '1rem' }}>
-                    <span className="gradient-text">{selectedCategory.icon}</span>
+                    <span className="gradient-text">{iconMap[selectedCategory.icon] || <LayoutGrid />}</span>
                     <h2 style={{ margin: 0 }}>{adAction === 'sell' ? 'Sell' : 'Rent Out'} <span className="gradient-text">{selectedCategory.name}</span></h2>
                   </div>
                 </div>
@@ -377,7 +330,7 @@ function App() {
                     <textarea placeholder="Tell us more about it..."></textarea>
                   </div>
 
-                  {(selectedCategory.id === 'bikes' || selectedCategory.id === 'cars') && (
+                  {(selectedCategory.slug === 'bikes' || selectedCategory.slug === 'cars') && (
                     <div className="form-grid">
                       <div className="input-field">
                         <label>Year / Model</label>
@@ -402,7 +355,7 @@ function App() {
                     </div>
                   )}
 
-                  {(selectedCategory.id === 'house' || selectedCategory.id === 'office' || selectedCategory.id === 'land') && (
+                  {(selectedCategory.slug === 'house' || selectedCategory.slug === 'office' || selectedCategory.slug === 'land') && (
                     <div className="form-grid">
                       <div className="input-field">
                         <label>Location</label>
@@ -424,6 +377,50 @@ function App() {
                 </form>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Chat Popup Modal */}
+      {isChatOpen && selectedProduct && (
+        <div className="chat-popup-overlay" onClick={() => setIsChatOpen(false)}>
+          <div className="chat-popup glass-morphism animate-fade-in" onClick={(e) => e.stopPropagation()}>
+            <div className="chat-header">
+              <div className="seller-badge">
+                <div className="seller-avatar">S</div>
+                <div style={{ flex: 1 }}>
+                  <div className="seller-name">Seller Online</div>
+                  <div className="seller-status">Ready to help</div>
+                </div>
+                <button className="close-chat-btn" onClick={() => setIsChatOpen(false)}><X size={20} /></button>
+              </div>
+            </div>
+            <div className="chat-messages animate-fade-in">
+              {messages.length === 0 ? (
+                <div className="chat-welcome">
+                  <MessageSquare size={32} />
+                  <p>Start a conversation with the seller</p>
+                </div>
+              ) : (
+                messages.map((msg, idx) => (
+                  <div key={idx} className={`chat-bubble ${msg.senderId === 1 ? 'sent' : 'received'}`}>
+                    {msg.content}
+                  </div>
+                ))
+              )}
+            </div>
+            <div className="chat-input-area glass-morphism">
+              <input
+                type="text"
+                placeholder="Type a message..."
+                value={chatMessage}
+                onChange={(e) => setChatMessage(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+              />
+              <button className="btn btn-primary send-btn" onClick={handleSendMessage}>
+                <Send size={20} />
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -456,7 +453,7 @@ function App() {
             <div className="categories-grid">
               {categories.map((cat) => (
                 <div key={cat.id} className="category-card glass-morphism" onClick={() => handleCategoryClick(cat)}>
-                  <div className="cat-icon-container gradient-text">{cat.icon}</div>
+                  <div className="cat-icon-container gradient-text">{iconMap[cat.icon] || <LayoutGrid />}</div>
                   <h3>{cat.name}</h3>
                   <p className="listing-count">{cat.count} Listings</p>
                 </div>
@@ -475,7 +472,7 @@ function App() {
           </div>
 
           <div className="product-grid">
-            {featuredListings.map(item => (
+            {listings.map(item => (
               <div key={item.id} className="product-card glass-morphism" onClick={() => handleProductClick(item)}>
                 <div className="image-wrapper">
                   <img src={item.images[0]} alt={item.title} className="product-image" />
@@ -485,7 +482,7 @@ function App() {
                   <h3 className="product-title">{item.title}</h3>
                   <div className="product-meta">
                     <span><MapPin size={14} /> {item.location}</span>
-                    <span><Calendar size={14} /> {item.time}</span>
+                    <span><Calendar size={14} /> 2h ago</span>
                   </div>
                 </div>
               </div>
